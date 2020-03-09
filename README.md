@@ -5,11 +5,11 @@
 docker build -t sm-base:<version> .
 
 ## Run
-
+```sh
 docker run -p 8080:8080 --rm sm-base serve
 docker run -v <host-dir>:/opt/ml -p 8080:8080 --rm sm-base serve
 docker run -e KEY=VALUE -v <host-dir>:/opt/ml -p 8080:8080 --rm sm-base serve
-
+```
 
 ## Extend the base image
 Create a new dockerfile with the following content
