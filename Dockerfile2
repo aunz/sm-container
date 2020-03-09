@@ -1,0 +1,24 @@
+FROM python:3.7-slim
+
+
+# Python won’t try to write .pyc or .pyo files on the import of source modules
+# Force stdin, stdout and stderr to be totally unbuffered. Good for logging
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONIOENCODING=UTF-8 LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH="/opt/program:${PATH}"
+
+RUN apt update
+# RUN apt install -y --no-install-recommends nginx
+
+RUN pip install flask
+RUN pip install pandas scikit-learn
+RUN pip install xgboost
+RUN pip install https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp37-cp37m-linux_x86_64.whl
+
+# remove all the cache to save space 
+RUN rm -rf /root/.cache
+
+ENV FLASK_ENV=production FLASK_APP=/opt/program/wsgi FLASK_RUN_HOST=0.0.0.0 FLASK_RUN_PORT=8080
+
+
+COPY program /opt/program
+WORKDIR /opt/program

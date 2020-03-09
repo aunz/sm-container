@@ -45,18 +45,20 @@ def start_server():
     subprocess.check_call(['ln', '-sf', '/dev/stdout', '/var/log/nginx/access.log'])
     subprocess.check_call(['ln', '-sf', '/dev/stderr', '/var/log/nginx/error.log'])
 
-    nginx = subprocess.Popen(['nginx', '-c', '/opt/program/nginx.conf'])
+    # nginx = subprocess.Popen(['nginx', '-c', '/opt/program/nginx.conf'])
     gunicorn = subprocess.Popen(['gunicorn',
                                  '--timeout', str(model_server_timeout),
                                  '-k', 'gevent',
-                                 '-b', 'unix:/tmp/gunicorn.sock',
+                                 # '-b', 'unix:/tmp/gunicorn.sock',
+                                 '-b', '0.0.0.0:8080',
                                  '-w', str(model_server_workers),
                                  'wsgi:app'])
 
-    signal.signal(signal.SIGTERM, lambda a, b: sigterm_handler(nginx.pid, gunicorn.pid))
+    # signal.signal(signal.SIGTERM, lambda a, b: sigterm_handler(nginx.pid, gunicorn.pid))
+    signal.signal(signal.SIGTERM, lambda a, b: sigterm_handler(0, gunicorn.pid))
 
     # If either subprocess exits, so do we.
-    pids = set([nginx.pid, gunicorn.pid])
+    pids = set([0, gunicorn.pid])
     while True:
         pid, _ = os.wait()
         if pid in pids:
