@@ -21,7 +21,7 @@ docker run -it -v C:/Users/K/Desktop/sm/program:/opt/program -p 5000:5000 -e FLA
 docker run -it -v C:/Users/K/Desktop/sm/program:/opt/program -v C:/Users/K/Desktop/sm/test:/opt/ml -p 5000:5000 -e FLASK_ENV=development -e FLASK_APP=/opt/program/app t2 flask run
 
 
-docker build -t sm-base .
+docker build -t sm-base --compress .
 
 docker build -t sm-base2 -f Dockerfile2
 
@@ -38,10 +38,14 @@ curl --data "aaa" localhost:8080/invocations
 
 
 docker save -o <path for generated tar file> <image name>
-
 docker load -i <path to image tar file>
+
+docker save sm-base | gzip > ../sm-base.tar.gz
 
 docker run -it --name t1 -v C:/Users/K/Desktop/sm-container/program:/opt/program -v C:/Users/K/Desktop/sm-container/local-test:/opt/ml -p 8080:8080 -e FLASK_ENV=development -e FLASK_APP=/opt/program/wsgi -e FLASK_RUN_PORT=8080 sm-base flask run --host=0.0.0.0
 
 
 flask run --host=0.0.0.0 --no-reload
+
+docker run -it --name t1 -v C:/Users/K/Desktop/sm-container/program:/opt/program -v C:/Users/K/Desktop/sm-container/local-test:/opt/ml -p 8080:8080  -e FLASK_ENV=development sm-base serve
+docker run -it --name t1 -v C:/Users/K/Desktop/sm-container/local-test:/opt/ml -p 8080:8080  sm-base serve
