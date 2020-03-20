@@ -1,0 +1,13 @@
+# include nginx & gunicorn
+FROM sm-base
+
+RUN apt install -y --no-install-recommends nginx
+
+RUN pip install gevent gunicorn
+
+RUN rm -rf /root/.cache
+
+COPY program /opt/program
+RUN mv /opt/program/serve2 /opt/program/serve 
+
+RUN chmod +x /opt/program/serve

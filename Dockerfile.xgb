@@ -1,0 +1,6 @@
+FROM sm-base
+
+
+RUN pip install xgboost
+
+RUN rm -rf /root/.cache
