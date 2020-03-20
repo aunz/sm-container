@@ -64,7 +64,9 @@ In the FrameworkModel, users can specify:
 
 ```sh
 
-docker build -f Dockerfile.base -t sm-base
+docker build -f Dockerfile.base -t sm-base .
+docker build -f Dockerfile.xgb -t sm-xgb .
+docker build -f Dockerfile.tf -t sm-tf .
 
 
 ```
@@ -73,12 +75,21 @@ docker build -f Dockerfile.base -t sm-base
 
 docker save <image>:<tag> | gzip > myimage_latest.tar.gz
 ```sh
-docker save sm-base:latest | gzip > /tmp/sm-base_latest.tar.gz
+docker save sm-base:latest | gzip > tmp/sm-base-latest.tar.gz
+docker save sm-xgb:latest | gzip > tmp/sm-xgb-latest.tar.gz
+docker save sm-tf:latest | gzip > tmp/sm-tf-latest.tar.gz
 ```
 
 docker load
 ```sh
 docker load -i sm-base-latest.tar.gz
+
 ```
 
+see packages
 
+```sh
+docker run --rm sm-base pip freeze
+docker run --rm sm-xgb pip freeze
+docker run --rm sm-tf pip freeze
+```
