@@ -73,12 +73,12 @@ docker build -f Dockerfile.base -t sm-base
 
 docker save <image>:<tag> | gzip > myimage_latest.tar.gz
 ```sh
-docker save sm-base:latest | gzip > sm-base_latest.tar.gz
+docker save sm-base:latest | gzip > /tmp/sm-base_latest.tar.gz
 ```
 
 docker load
 ```sh
-docker load -i /tmp/sm-base-latest.tar.gz
+docker load -i sm-base-latest.tar.gz
 ```
 
 
