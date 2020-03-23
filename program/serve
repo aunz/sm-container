@@ -1,6 +1,4 @@
-%%writefile tmp/serve
 #!/usr/bin/env python
-
 import os
 import sys
 import subprocess
@@ -47,7 +45,6 @@ import boto3
 tmp = os.environ.get('SAGEMAKER_SUBMIT_DIRECTORY')
 
 if tmp:
-    
     if os.environ.get('PRINT_SYS'): print('Download source file')
     # parse the s3 url and download as binary object
     tmp = urlparse(tmp)
@@ -78,7 +75,7 @@ module_name = re.sub(r'\.py', '', os.environ.get('SAGEMAKER_PROGRAM'), flags=re.
 module_name = importlib.import_module('userpackage.' + module_name)
 
 model_fn = module_name.model_fn
-model = model_fn('/opt/ml/model') # call with the model dir, should return a model
+model = model_fn('/opt/ml/model/') # call with the model dir, should return a model
 
 transform_fn = module_name.transform_fn
 
