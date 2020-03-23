@@ -1,6 +1,17 @@
 # The output of build
 
 
+# 20200323
+
+REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
+sm-tf                   latest              9b4cf30c01e9        25 minutes ago      3.12GB
+sm-base                 latest              0ab16925eb2c        28 minutes ago      1.31GB
+sm-xgb                  latest              bef5825a5c61        About an hour ago   1.62GB
+
+
+
+
+
 # 20200320
 
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
