@@ -39,6 +39,9 @@ COPY <host-dir> /opt/program
 ### The tensorflow
 - Dockerfile.tf, call it **sm-tf**
 
+### The tensorflow + xgboost
+- Dockerfile.tx, call it **sm-tx**
+
 ### The nginx & unicorn
 - Dockerfile2.base, call it **sm2-base**
 - This will run nginx, gunicorn, flask
@@ -121,6 +124,8 @@ see packages
 docker run --rm sm-base pip freeze
 docker run --rm sm-xgb pip freeze
 docker run --rm sm-tf pip freeze
+docker run --rm sm-tx pip freeze
+
 ```
 
 
