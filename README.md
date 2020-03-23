@@ -94,6 +94,7 @@ open(path + '/file.csv')
 docker build -f Dockerfile.base -t sm-base .
 docker build -f Dockerfile.xgb -t sm-xgb .
 docker build -f Dockerfile.tf -t sm-tf .
+docker build -f Dockerfile.tx -t sm-tx .
 
 ```
 
@@ -104,6 +105,8 @@ docker save <image>:<tag> | gzip > myimage_latest.tar.gz
 docker save sm-base:latest | gzip > tmp/sm-base-latest.tar.gz
 docker save sm-xgb:latest | gzip > tmp/sm-xgb-latest.tar.gz
 docker save sm-tf:latest | gzip > tmp/sm-tf-latest.tar.gz
+docker save sm-tx:latest | gzip > tmp/sm-tx-latest.tar.gz
+
 ```
 
 docker load
