@@ -1,0 +1,1 @@
+__import__('setuptools').setup(name='userpackage', packages=['userpackage'], include_package_data=True)

@@ -1,3 +1,4 @@
+%%writefile tmp/serve
 #!/usr/bin/env python
 
 import os
@@ -21,41 +22,16 @@ if os.environ.get('PRINT_SYS'):
 
     print('free -h')
     subprocess.call('free -h', shell=True)
-
-    subprocess.call('ls /', shell=True)
-    subprocess.call('ls /opt', shell=True)
-
-    print('\n/opt/ml')
-    subprocess.call('ls /opt/ml', shell=True)
-
-    # These in FrameWorkModel
-    print('\n/opt/ml/model')
-    subprocess.call('ls /opt/ml/model', shell=True)
-    print('\n/opt/program')
-    subprocess.call('ls /opt/program', shell=True)
-
-    # These in ScriptProcessor
-    print('\n/opt/ml/config')
-    subprocess.call('ls /opt/ml/config', shell=True)
-    print('\n/opt/ml/output')
-    subprocess.call('ls /opt/ml/output', shell=True)
-    print('\n/opt/ml/output/data')
-    subprocess.call('ls /opt/ml/output/data', shell=True)
-    print('\n/opt/ml/output/data/tmp_data')
-    subprocess.call('ls /opt/ml/output/data/tmp_data', shell=True)
-    print('\n/opt/ml/output/metrics')
-    subprocess.call('ls /opt/ml/output/metrics', shell=True)
-    print('\n/opt/ml/output/metrics/cloudwatch')
-    subprocess.call('ls /opt/ml/output/metrics/cloudwatch', shell=True)
-    print('\n/opt/ml/processing')
-    subprocess.call('ls /opt/ml/processing', shell=True)
-    print('\n/opt/ml/processing/input')
-    subprocess.call('ls /opt/ml/processing/input', shell=True)
-    print('\n/opt/ml/processing/input/code')
-    subprocess.call('ls /opt/ml/processing/input/code', shell=True)
-    print('\n/opt/ml/processing/output')
-    subprocess.call('ls /opt/ml/processing/output', shell=True)
-
+    
+    print('dir tree')
+    '''In FrameworkModel: /opt/ml/{model, program}        
+    In ScriptProcessor
+        /opt/ml/config
+        /opt/ml/output/data/tmp_data
+        /opt/ml/output/metrics/cloudwatch
+        /opt/ml/processing/{input/output/any_user_defined_channel}'''
+    subprocess.call('find /opt | sed -e "s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/"', shell=True)
+    
     # these in framework model
     print(os.environ.get('SAGEMAKER_PROGRAM')) # the entry_point
     print(os.environ.get('SAGEMAKER_SUBMIT_DIRECTORY')) # the sourcedir.tar.gz
@@ -70,23 +46,27 @@ import boto3
 
 tmp = os.environ.get('SAGEMAKER_SUBMIT_DIRECTORY')
 
-if not tmp: raise Exception('The environment variable SAGEMAKER_SUBMIT_DIRECTORY is needed')
-
-# parse the s3 url and download as binary object
-tmp = urlparse(tmp)
-tmp = boto3.client('s3').get_object(Bucket=tmp.netloc, Key=tmp.path[1:])['Body']
-
-# extract the object to drive
-with tarfile.open(mode='r:gz', fileobj=tmp) as f: f.extractall('/opt/program/user_package')
-
-# write a setup.py & install it, so user source_dir shouldn't have setup.py  
-with open('/opt/program/user_package/setup.py', 'w') as f:
-    f.write('from setuptools import setup; setup(name="User Package", packages=[""])')
+if tmp:
     
-subprocess.call('cd /opt/program/user_package && pip3 install .', shell=True)
+    if os.environ.get('PRINT_SYS'): print('Download source file')
+    # parse the s3 url and download as binary object
+    tmp = urlparse(tmp)
+    tmp = boto3.client('s3').get_object(Bucket=tmp.netloc, Key=tmp.path[1:])['Body']
+
+    # extract the object to drive
+    if os.environ.get('PRINT_SYS'): print('Extract source file')
+    with tarfile.open(mode='r:gz', fileobj=tmp) as f: f.extractall('/opt/program/userpackage')
+
+cmd = 'cd /opt/program/ && pip3 install --no-index --no-cache-dir . '
+if not os.environ.get('PRINT_SYS'): cmd += '-q'
+
+subprocess.call(cmd, shell=True)
 
 del tmp
 
+if os.environ.get('PRINT_SYS'):
+    print('dir tree')
+    subprocess.call('find /opt | sed -e "s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/"', shell=True)
 
 
 ########## 3 ########## import the user code, expecting model_fn, transform_fn
@@ -95,7 +75,7 @@ import importlib
 import re
 
 module_name = re.sub(r'\.py', '', os.environ.get('SAGEMAKER_PROGRAM'), flags=re.I)
-module_name = importlib.import_module(module_name)
+module_name = importlib.import_module('userpackage.' + module_name)
 
 model_fn = module_name.model_fn
 model = model_fn('/opt/ml/model') # call with the model dir, should return a model

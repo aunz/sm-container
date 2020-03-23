@@ -17,7 +17,7 @@ RUN rm -rf /root/.cache
 
 ENV FLASK_ENV=production FLASK_APP=/opt/program/wsgi FLASK_RUN_HOST=0.0.0.0 FLASK_RUN_PORT=8080
 
-COPY program/serve /opt/program/
+COPY program /opt/program/
 WORKDIR /opt/program
 
 RUN chmod +x /opt/program/serve
