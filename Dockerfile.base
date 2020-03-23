@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.7
 
 
 # Python won’t try to write .pyc or .pyo files on the import of source modules
